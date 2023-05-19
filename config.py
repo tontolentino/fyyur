@@ -11,3 +11,6 @@ DEBUG = True
 
 # IMPLEMENT DATABASE URL 
 SQLALCHEMY_DATABASE_URI = 'postgresql://neriton.tolentino@localhost:5432/fyyur'
+
+# To supress deprecation warning
+SQLALCHEMY_TRACK_MODIFICATIONS = False
