@@ -101,30 +101,44 @@ def index():
 
 @app.route('/venues')
 def venues():
-  # TODO: replace with real venues data.
-  #       num_upcoming_shows should be aggregated based on number of upcoming shows per venue.
-  data=[{
-    "city": "San Francisco",
-    "state": "CA",
-    "venues": [{
-      "id": 1,
-      "name": "The Musical Hop",
-      "num_upcoming_shows": 0,
-    }, {
-      "id": 3,
-      "name": "Park Square Live Music & Coffee",
-      "num_upcoming_shows": 1,
-    }]
-  }, {
-    "city": "New York",
-    "state": "NY",
-    "venues": [{
-      "id": 2,
-      "name": "The Dueling Pianos Bar",
-      "num_upcoming_shows": 0,
-    }]
-  }]
-  return render_template('pages/venues.html', areas=data);
+
+  now_string = datetime.now().strftime("%Y-%m-%d")
+  count_case = db.case(
+      [(Show.start_time > now_string, 1)],
+      else_=0
+  )
+
+  areas = Venue.query.with_entities(Venue.city, Venue.state).distinct().all()
+  data = []
+
+  for area in areas:
+      venues = Venue.query\
+      .filter_by(city=area.city)\
+      .filter_by(state=area.state)\
+      .with_entities(Venue.city, Venue.state, Venue.id, Venue.name, db.func.sum(count_case))\
+      .outerjoin(Show)\
+      .group_by(Venue.city, Venue.state, Venue.id, Venue.name) \
+      .order_by(Venue.city.desc(), Venue.id) \
+      .all()
+      
+      venue_result = [
+      {
+          'id': row[2],
+          'name': row[3],
+          'num_upcoming_shows': row[4]
+      }
+      for row in venues
+      ]
+
+      area_result = {
+      'city': area.city,
+      'state': area.state,
+      'venues': venue_result
+      }
+
+      data.append(area_result)
+
+  return render_template('pages/venues.html', areas=data)
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
