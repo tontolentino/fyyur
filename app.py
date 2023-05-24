@@ -102,9 +102,8 @@ def index():
 @app.route('/venues')
 def venues():
 
-  now_string = datetime.now().strftime("%Y-%m-%d")
   count_case = db.case(
-      [(Show.start_time > now_string, 1)],
+      [(Show.start_time > datetime.now(), 1)],
       else_=0
   )
 
@@ -142,17 +141,30 @@ def venues():
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
-  # TODO: implement search on venues with partial string search. Ensure it is case-insensitive.
-  # seach for Hop should return "The Musical Hop".
-  # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
-  response={
-    "count": 1,
-    "data": [{
-      "id": 2,
-      "name": "The Dueling Pianos Bar",
-      "num_upcoming_shows": 0,
-    }]
+
+  search_term = request.form.get('search_term', '')
+  venues = Venue.query.filter(Venue.name.ilike(f'%{search_term}%'))
+
+  data = []
+
+  for venue in venues:
+     data.append(
+        {
+          'id': venue.id,
+          'name': venue.name,
+          'num_upcoming_shows': len(
+            Show.query.filter(Show.venue_id == venue.id)\
+              .filter(Show.start_time > datetime.now())\
+              .all()
+          )
+        }
+     )
+  
+  response = {
+     'count': len(data),
+     'data': data
   }
+  
   return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
 
 @app.route('/venues/<int:venue_id>')
