@@ -4,7 +4,6 @@ from datetime import datetime
 app.app_context().push()
 
 venue1 = Venue(
-    id=1,
     name="The Musical Hop",
     city="San Francisco",
     state="CA",
@@ -19,7 +18,6 @@ venue1 = Venue(
 )
 
 venue2 = Venue(
-    id=2,
     name="The Dueling Pianos Bar",
     city="New York",
     state="NY",
@@ -34,7 +32,6 @@ venue2 = Venue(
 )
 
 venue3 = Venue(
-    id=3,
     name="Park Square Live Music & Coffee",
     city="San Francisco",
     state="CA",
@@ -49,7 +46,6 @@ venue3 = Venue(
 )
 
 artist4 = Artist(
-    id=4,
     name="Guns N Petals",
     city="San Francisco",
     state="CA",
@@ -63,7 +59,6 @@ artist4 = Artist(
 )
 
 artist5 = Artist(
-    id=5,
     name="Matt Quevedo",
     city="New York",
     state="NY",
@@ -77,7 +72,6 @@ artist5 = Artist(
 )
 
 artist6 = Artist(
-    id=6,
     name="The Wild Sax Band",
     city="San Francisco",
     state="CA",
@@ -91,35 +85,30 @@ artist6 = Artist(
 )
 
 show1 = Show(
-    id=1,
     start_time=datetime(2019, 5, 21, 21, 30, 0)
 )
 show1.venue = venue1
 show1.artist = artist4
 
 show2 = Show(
-    id=2,
     start_time=datetime(2019, 6, 15, 23, 0, 0)
 )
 show2.venue = venue3
 show2.artist = artist5
 
 show3 = Show(
-    id=3,
     start_time=datetime(2035, 4, 1, 20, 0, 0)
 )
 show3.venue = venue3
 show3.artist = artist6
 
 show4 = Show(
-    id=4,
     start_time=datetime(2035, 4, 8, 20, 0, 0)
 )
 show4.venue = venue3
 show4.artist = artist6
 
 show5 = Show(
-    id=5,
     start_time=datetime(2035, 4, 15, 20, 0, 0)
 )
 show5.venue = venue3
