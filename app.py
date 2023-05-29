@@ -12,7 +12,7 @@ import logging
 from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
-from models import Artist, Show, Venue
+from models import *
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
@@ -185,29 +185,30 @@ def create_venue_form():
 def create_venue_submission():
 
   try:
+    form = VenueForm(request.form)
     venue = Venue(
-      name = request.form['name'],
-      city = request.form['city'],
-      state = request.form['state'],
-      address = request.form['address'],
-      phone = request.form['phone'],
-      image_link = request.form['image_link'],
-      facebook_link = request.form['facebook_link'],
-      website = request.form['website_link'],
-      seeking_talent = True if 'seeking_talent' in request.form else False,
-      seeking_description = request.form['seeking_description'],
-      genres = request.form.getlist('genres')
+      name = form.name.data,
+      city = form.city.data,
+      state = form.state.data,
+      address = form.address.data,
+      phone = form.phone.data,
+      image_link = form.image_link.data,
+      facebook_link = form.facebook_link.data,
+      website = form.website_link.data,
+      seeking_talent = form.seeking_talent.data,
+      seeking_description = form.seeking_description.data,
+      genres = form.genres.data
     )
 
     db.session.add(venue)
     db.session.commit()
 
     # on successful db insert, flash success
-    flash('Venue ' + request.form['name'] + ' was successfully listed!')
+    flash(f'Venue {venue.name} was successfully listed!')
 
-  except:
+  except Exception as err:
     db.session.rollback()
-    flash('An error occurred. Venue ' + request.form['name'] + ' could not be listed.')
+    flash(f'An error occurred creating the Venue: {venue.name}. Error: {err}')
   
   finally:
     db.session.close()
@@ -444,26 +445,28 @@ def create_artist_form():
 def create_artist_submission():
 
   try:
+    form = ArtistForm(request.form)
     artist = Artist(
-      name = request.form['name'],
-      city = request.form['city'],
-      state = request.form['state'],
-      phone = request.form['phone'],
-      genres = request.form.getlist('genres'),
-      image_link = request.form['image_link'],
-      facebook_link = request.form['facebook_link'],
-      website = request.form['website_link'],
-      seeking_venue = True if 'seeking_venue' in request.form else False,
-      seeking_description = request.form['seeking_description']
+      name = form.name.data,
+      city = form.city.data,
+      state = form.state.data,
+      phone = form.phone.data,
+      genres = form.genres.data,
+      image_link = form.image_link.data,
+      facebook_link = form.facebook_link.data,
+      website = form.website_link.data,
+      seeking_venue = form.seeking_venue.data,
+      seeking_description = form.seeking_description.data
     )
 
     db.session.add(artist)
     db.session.commit()
-    flash('Artist ' + request.form['name'] + ' was successfully listed!')
 
-  except:
+    flash(f'Artist {artist.name} was successfully listed!')
+
+  except Exception as err:
     db.session.rollback()
-    flash('An error occurred. Artist ' + request.form['name'] + ' could not be listed.')
+    flash(f'An error occurred creating the Artist: {artist.name}. Error: {err}')
 
   finally:
     db.session.close()
