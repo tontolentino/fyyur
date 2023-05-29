@@ -339,7 +339,7 @@ def show_artist(artist_id):
 @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
 def edit_artist(artist_id):
 
-  form = ArtistForm()
+  form = ArtistForm(request.form)
   artist = Artist.query.get(artist_id)
 
   if artist:
@@ -361,25 +361,26 @@ def edit_artist(artist_id):
 def edit_artist_submission(artist_id):
 
   try:
+    form = ArtistForm(request.form)
     artist = Artist.query.get(artist_id)
     
-    artist.name = request.form['name']
-    artist.city = request.form['city']
-    artist.state = request.form['state']
-    artist.phone = request.form['phone']
-    artist.genres = request.form.getlist('genres')
-    artist.image_link = request.form['image_link']
-    artist.facebook_link = request.form['facebook_link']
-    artist.website = request.form['website_link']
-    artist.seeking_venue = True if 'seeking_venue' in request.form else False
-    artist.seeking_description = request.form['seeking_description']
+    artist.name = form.name.data
+    artist.city = form.city.data
+    artist.state = form.state.data
+    artist.phone = form.phone.data
+    artist.genres = form.genres.data
+    artist.image_link = form.image_link.data
+    artist.facebook_link = form.facebook_link.data
+    artist.website = form.website_link.data
+    artist.seeking_venue = form.seeking_venue.data
+    artist.seeking_description = form.seeking_description.data
 
     db.session.commit()
-    flash('Artist ' + request.form['name'] + ' was successfully updated!')
+    flash(f'Artist {artist.name} was successfully updated!')
   
   except:
     db.session.rollback()
-    flash('Artist ' + request.form['name'] + ' could not be updated!')
+    flash(f'Artist {form.name.data} could not be updated!')
     
   finally:
     db.session.close()
@@ -389,7 +390,7 @@ def edit_artist_submission(artist_id):
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
 def edit_venue(venue_id):
 
-  form = VenueForm()
+  form = VenueForm(request.form)
   venue = Venue.query.get(venue_id)
 
   if venue:
@@ -411,26 +412,27 @@ def edit_venue(venue_id):
 def edit_venue_submission(venue_id):
 
   try:
+    form = VenueForm(request.form)
     venue = Venue.query.get(venue_id)
 
-    venue.name = request.form['name']
-    venue.city = request.form['city']
-    venue.state = request.form['state']
-    venue.address = request.form['address']
-    venue.phone = request.form['phone']
-    venue.image_link = request.form['image_link']
-    venue.facebook_link = request.form['facebook_link']
-    venue.website = request.form['website_link']
-    venue.seeking_talent = True if 'seeking_talent' in request.form else False
-    venue.seeking_description = request.form['seeking_description']
-    venue.genres = request.form.getlist('genres')
+    venue.name = form.name.data
+    venue.city = form.city.data
+    venue.state = form.state.data
+    venue.address = form.address.data
+    venue.phone = form.phone.data
+    venue.image_link = form.image_link.data
+    venue.facebook_link = form.facebook_link.data
+    venue.website = form.website_link.data
+    venue.seeking_talent = form.seeking_talent.data
+    venue.seeking_description = form.seeking_description.data
+    venue.genres = form.genres.data
 
     db.session.commit()
-    flash('Venue ' + request.form['name'] + ' was successfully updated!')
+    flash(f'Venue {venue.name} was successfully updated!')
   
   except:
     db.session.rollback()
-    flash('Venue ' + request.form['name'] + ' could not be updated!')
+    flash(f'Venue {form.name.data} could not be updated!')
     
   finally:
     db.session.close()
